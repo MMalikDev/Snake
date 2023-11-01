@@ -1,0 +1,140 @@
+{
+  "name": "Development",
+
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "dockerComposeFile": "compose.yaml",
+  "shutdownAction": "stopCompose",
+  "service": "devcontainer",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "enableNonRootDocker": "true",
+      "version": "20.10",
+      "moby": "false"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "installTools": true,
+      "installJupyterlab": true,
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "1.70",
+      "profile": "minimal"
+    },
+    "ghcr.io/devcontainers-contrib/features/node-asdf:0": {
+      "version": "latest"
+    },
+    "ghcr.io/prulloac/devcontainer-features/bun:1": {}
+  },
+
+  "postCreateCommand": "bash setup.sh",
+
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": {
+      "label": "Website"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Devcontainer
+        "remote.autoForwardPorts": false,
+
+        // Preferences
+        "workbench.colorTheme": "Default Dark Modern",
+        "workbench.panel.defaultLocation": "right",
+        "workbench.iconTheme": "vscode-icons",
+        "window.menuBarVisibility": "compact",
+        "workbench.layoutControl.enabled": false,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "window.commandCenter": false,
+
+        "editor.minimap.renderCharacters": false,
+        "editor.minimap.autohide": true,
+        "editor.minimap.scale": 2,
+
+        "editor.rulers": [74, 80, 100, 120, 160, 160],
+        "workbench.colorCustomizations": {
+          "editorRuler.foreground": "#80808020"
+        },
+
+        "terminal.integrated.ignoreBracketedPasteMode": true,
+        "terminal.integrated.smoothScrolling": true,
+
+        // Format
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "isort.args": ["--profile", "black"],
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+          }
+        },
+        "svelte.enable-ts-plugin": true,
+        "[svelte]": {
+          "editor.defaultFormatter": "svelte.svelte-vscode"
+        },
+        "[shellscript]": {
+          "editor.defaultFormatter": "shakram02.bash-beautify"
+        },
+        "[rust]": {
+          "editor.defaultFormatter": "rust-lang.rust-analyzer"
+        },
+
+        // Misc.
+        "jupyter.askForKernelRestart": false,
+        "redhat.telemetry.enabled": false
+      },
+      "extensions": [
+        // Format
+        "ms-python.black-formatter",
+        "shakram02.bash-beautify",
+        "esbenp.prettier-vscode",
+        "wix.vscode-import-cost",
+        "svelte.svelte-vscode",
+        "redhat.vscode-yaml",
+        "ms-python.isort",
+
+        // Rust
+        "rust-lang.rust-analyzer",
+
+        // Python
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+
+        // Jupyter
+        "ms-toolsai.vscode-jupyter-slideshow",
+        "ms-toolsai.vscode-jupyter-cell-tags",
+        "ms-toolsai.jupyter-renderers",
+        "ms-toolsai.jupyter-keymap",
+        "ms-toolsai.jupyter",
+
+        // Javascript
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "leonzalion.vscode-ejs",
+
+        // DevTools
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "ms-vscode-remote.remote-containers",
+        "ms-azuretools.vscode-docker",
+
+        // Views
+        "GrapeCity.gc-excelviewer",
+        "ms-vscode.live-server",
+        "ms-vscode.hexeditor",
+        "qwtel.sqlite-viewer",
+        "tomoki1207.pdf",
+        "mtxr.sqltools",
+
+        // Misc.
+        "streetsidesoftware.code-spell-checker",
+        "Cardinal90.multi-cursor-case-preserve",
+        "vscode-icons-team.vscode-icons"
+      ]
+    }
+  }
+}

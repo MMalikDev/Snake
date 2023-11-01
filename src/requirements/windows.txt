@@ -1,0 +1,21 @@
+# Machine Learning
+torch
+torchvision
+scikit-learn
+
+# Data Manipulation
+numpy
+pandas
+
+# Visualization
+seaborn
+torchinfo
+matplotlib
+
+# Game
+windows-curses
+pygame
+PyQt5
+
+# Kill Switch
+keyboard

@@ -1,0 +1,19 @@
+version: "3.8"
+name: snake
+
+networks:
+  proxy:
+    name: $NETWORK_NAME
+
+services:
+  python:
+    build: $PYTHON_IMAGE
+    image: code_py
+    container_name: python
+
+    environment:
+      THIRD_PARTY_LOGS: $THIRD_PARTY_LOGS
+      LOG_LEVEL: $LOG_LEVEL
+
+    networks:
+      proxy:
