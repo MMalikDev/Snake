@@ -65,13 +65,23 @@ use_env_file(){
     [[ $(get_bool RUN_LOCAL) == "true" ]] && run_locally $@
     run_docker
 }
+use_wsl(){
+    set -f
+    local input=$1
+    local IFS=','
+    local array=($OPTARG)
+    
+    wsl --exec bash run.sh ${array[*]}
+    exit 0
+}
 
 # ---------------------------------------------------------------------- #
 # Main Function
 # ---------------------------------------------------------------------- #
 main(){
-    while getopts "dlch" OPTION; do
+    while getopts "w:dlch" OPTION; do
         case $OPTION in
+            w) use_wsl $OPTARG      ;;
             d) run_devcontainer $@  ;;
             l) run_locally  $@      ;;
             c) run_docker           ;;
