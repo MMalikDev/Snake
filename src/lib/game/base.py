@@ -76,6 +76,22 @@ class SnakeGame:
                 self.head = Point(x, y + 1)
             case Direction.LEFT:
                 self.head = Point(x - 1, y)
+
+        if self.head != self.snake[1]:
+            self.snake.insert(0, self.head)
+            return
+
+        # Keep going straight if head is eating neck
+        match self.direction:
+            case Direction.UP:
+                self.head = Point(x, y + 1)
+            case Direction.RIGHT:
+                self.head = Point(x - 1, y)
+            case Direction.DOWN:
+                self.head = Point(x, y - 1)
+            case Direction.LEFT:
+                self.head = Point(x + 1, y)
+
         self.snake.insert(0, self.head)
 
     def update_tail(self) -> bool:
