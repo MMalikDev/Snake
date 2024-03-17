@@ -20,14 +20,19 @@ def main() -> None:
     if "human" in sys.argv:
         if "cli" in sys.argv:
             human = player.human.PlayerCLI(width, height)
+        elif "term" in sys.argv:
+            human = player.human.PlayerTerm(width, height)
         else:
             human = player.human.PlayerGUI(width, height)
+
         human.play()
 
     if "show" in sys.argv:
         agent = player.ai.agent.Agent(model)
         if "cli" in sys.argv:
             ai = player.ai.PlayerCLI(width, height, agent)
+        elif "term" in sys.argv:
+            ai = player.ai.PlayerTerm(width, height, agent)
         else:
             ai = player.ai.PlayerGUI(width, height, agent)
 
@@ -40,8 +45,11 @@ def main() -> None:
             game = player.ai.state.StateGUI(width, height)
         elif "cli" in sys.argv:
             game = player.ai.state.StateCLI(width, height)
+        elif "term" in sys.argv:
+            game = player.ai.state.StateTerm(width, height)
         else:
             game = player.ai.state.StateBase(width, height)
+
         agent = player.ai.agent.Agent(model)
         if show_graph:
             agent.model.show_summary()

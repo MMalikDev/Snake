@@ -2,31 +2,9 @@ import curses
 from curses import textpad
 
 from config import settings
+from lib.exceptions import TerminalTooSmall
 
 from .base import Point, SnakeGame
-
-
-class TerminalTooSmall(Exception):
-    def __init__(
-        self,
-        min_width: int,
-        min_height: int,
-        current_width: int,
-        current_height: int,
-    ):
-        self.min_width = min_width
-        self.min_height = min_height
-        self.current_width = current_width
-        self.current_height = current_height
-        self.message = "Terminal is too small - Need: %iw %ih | Have: %iw %ih"
-
-    def __str__(self):
-        return self.message % (
-            self.min_width,
-            self.min_height,
-            self.current_width,
-            self.current_height,
-        )
 
 
 class SnakeGameCLI(SnakeGame):
@@ -54,12 +32,12 @@ class SnakeGameCLI(SnakeGame):
         self.snake_color = curses.color_pair(3)
 
     def init_sizes(self):
-        self.rows, self.cols = self.display.getmaxyx()
+        h, w = self.display.getmaxyx()
         min_w, min_h = self.width + 2, self.height + 3
-        self.w_offset = self.cols // 2 - self.width // 2
-        self.h_offset = self.rows // 2 - self.height // 2 + 1
-        if self.cols < min_w or self.rows < min_h:
-            raise TerminalTooSmall(min_w, min_h, self.cols, self.rows)
+        self.w_offset = w // 2 - self.width // 2
+        self.h_offset = h // 2 - self.height // 2 + 1
+        if w < min_w or h < min_h:
+            raise TerminalTooSmall(min_w, min_h, w, h)
 
     def initialize_display(self) -> None:
         self.display = curses.initscr()
@@ -101,7 +79,7 @@ class SnakeGameCLI(SnakeGame):
 
     def refresh(self) -> None:
         score_text = "Score: {}".format(self.score)
-        h, w = 0, self.cols // 2 - len(score_text) // 2
+        h, w = 0, self.display.getmaxyx()[1] // 2 - len(score_text) // 2
         self.display.addstr(h, w, score_text)
         self.render_display()
         self.display.refresh()

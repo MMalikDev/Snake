@@ -4,7 +4,7 @@ from lib.game import Direction, SnakeGame
 from lib.player.base import PlayerBase
 
 from .agent import Agent
-from .state import StateCLI, StateGUI
+from .state import StateCLI, StateGUI, StateTerm
 
 
 class _PlayerAI(PlayerBase):
@@ -29,3 +29,9 @@ class PlayerCLI(_PlayerAI):
     def __init__(self, width: int, height: int, agent: Agent) -> None:
         super().__init__(width, height, agent)
         self.game = StateCLI
+
+
+class PlayerTerm(_PlayerAI):
+    def __init__(self, width: int, height: int, agent: Agent) -> None:
+        super().__init__(width, height, agent)
+        self.game = StateTerm
