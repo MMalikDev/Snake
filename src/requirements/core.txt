@@ -18,3 +18,4 @@ PyQt5
 
 # Kill Switch
 keyboard
+blessed

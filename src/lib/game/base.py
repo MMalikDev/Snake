@@ -1,5 +1,6 @@
 import random
 import sys
+from abc import abstractmethod
 from collections import namedtuple
 from enum import Enum
 from typing import Optional
@@ -109,3 +110,10 @@ class SnakeGame:
         if keyboard.is_pressed("q"):
             logger.info("Kill switch utilized to exit program")
             self.exit()
+
+    @abstractmethod
+    def refresh():
+        """
+        Refresh user interface and show score
+        """
+        pass
