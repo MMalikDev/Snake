@@ -13,9 +13,6 @@ class SnakeGameCLI(SnakeGame):
         self.framerate = settings.Display.FRAMERATE
         self.tail = None
 
-        self.apple_color = "🍎"  # "\u1F34E"
-        self.snake_color = "🟩"  # "\u1F7E9"
-
         self.initialize_display()
         self.get_event = self.display.getch
 

@@ -13,9 +13,6 @@ class SnakeGameTerm(SnakeGame):
         self.display = Terminal()
         self.tail = None
 
-        self.apple_icon = "🍎"  # "\u1F34E"
-        self.snake_icon = "🟩"  # "\u1F7E9"
-
         self.color_food = self.display.on_red
         self.color_snake = self.display.on_green
 

@@ -13,9 +13,12 @@ torchinfo
 matplotlib
 
 # Game
-windows-curses
 pygame
 PyQt5
 
 # Kill Switch
 keyboard
+blessed
+
+# Windows
+windows-curses
