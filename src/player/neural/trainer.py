@@ -7,17 +7,19 @@ from .state import GameStateBase
 
 
 class Trainer:
-    def __init__(self, state: GameStateBase, agent: Agent, target_score: int) -> None:
-        self.state = state
+    def __init__(self, agent: Agent, target_score: int) -> None:
         self.agent = agent
+        self.width = agent.width
+        self.height = agent.height
         self.target_score = target_score
+        self.state = agent.game(self.width, self.height)
 
         self.total_score = 0
         self.score, self.mean_score = 0, 0
         self.record, self.mean_record = 0, 0
         self.plot_scores, self.plot_mean_scores = [], []
 
-        self.size = "%iw%ih/" % (self.state.width, self.state.height)
+        self.size = "%iw%ih/" % (self.width, self.height)
         self.best = "%s/best/" % self.size
         self.steadfast = "%s/mean/" % self.size
 

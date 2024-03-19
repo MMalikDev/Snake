@@ -38,34 +38,30 @@ def main() -> None:
         perfect.play()
 
     if "show" in sys.argv:
-        agent = player.neural.Agent(model)
+        if "gui" in sys.argv:
+            agent = player.neural.AgentGUI(width, height, model)
+        elif "cli" in sys.argv:
+            agent = player.neural.AgentCLI(width, height, model)
+        else:
+            agent = player.neural.AgentTerm(width, height, model)
         if show_graph:
             agent.model.show_summary()
 
-        if "gui" in sys.argv:
-            neural_net = player.neural.PlayerGUI(width, height, agent)
-        elif "cli" in sys.argv:
-            neural_net = player.neural.PlayerCLI(width, height, agent)
-        else:
-            neural_net = player.neural.PlayerTerm(width, height, agent)
-
-        neural_net.play()
+        agent.play()
 
     if "train" in sys.argv or train:
-        agent = player.neural.Agent(model)
+        if "gui" in sys.argv:
+            agent = player.neural.AgentGUI(width, height, model)
+        elif "cli" in sys.argv:
+            agent = player.neural.AgentCLI(width, height, model)
+        elif "term" in sys.argv:
+            agent = player.neural.AgentTerm(width, height, model)
+        else:
+            agent = player.neural.Agent(width, height, model)
         if show_graph:
             agent.model.show_summary()
 
-        if "gui" in sys.argv and display:
-            game = player.neural.GameStateGUI(width, height)
-        elif "cli" in sys.argv:
-            game = player.neural.GameStateCLI(width, height)
-        elif "term" in sys.argv:
-            game = player.neural.GameStateTerm(width, height)
-        else:
-            game = player.neural.GameStateBase(width, height)
-
-        trainer = player.neural.Trainer(game, agent, target_score)
+        trainer = player.neural.Trainer(agent, target_score)
 
         trainer.train()
 

@@ -7,13 +7,16 @@ import torch
 
 from config import settings
 from game import Direction, Point
+from player.base import PlayerBase
 
 from .model import Linear_QNet, QTrainer
-from .state import GameStateBase
+from .state import GameStateBase, GameStateCLI, GameStateGUI, GameStateTerm
 
 
-class BaseAgent:
-    def __init__(self, model: Optional[str] = None) -> None:
+class _BaseAgent(PlayerBase):
+    def __init__(self, width: int, height: int, model: Optional[str] = None) -> None:
+        super().__init__(width, height)
+
         self.n_games = 0
         self.epsilon = 0  # Randomness
         self.gamma = 0.9  # Discount Rate
@@ -49,9 +52,10 @@ class BaseAgent:
         self.trainer.train_step(states, actions, rewards, next_states, done)
 
 
-class Agent(BaseAgent):
-    def __init__(self, model: Optional[str] = None) -> None:
-        super().__init__(model)
+class Agent(_BaseAgent):
+    def __init__(self, width: int, height: int, model: Optional[str] = None) -> None:
+        super().__init__(width, height, model)
+        self.game = GameStateBase
         self.epsilon_breakpoint = settings.Models.EPSILON_BREAKPOINT
 
     def get_action(self, state) -> List[int]:
@@ -125,3 +129,26 @@ class Agent(BaseAgent):
         ]
 
         return np.array(state, dtype=int)
+
+    def get_input(self, game: GameStateBase) -> Optional[Direction]:
+        state = self.get_state(game)
+        action = self.get_action(state)
+        return game.get_direction(action)
+
+
+class AgentGUI(Agent):
+    def __init__(self, width: int, height: int, model: Optional[str] = None) -> None:
+        super().__init__(width, height, model)
+        self.game = GameStateGUI
+
+
+class AgentCLI(Agent):
+    def __init__(self, width: int, height: int, model: Optional[str] = None) -> None:
+        super().__init__(width, height, model)
+        self.game = GameStateCLI
+
+
+class AgentTerm(Agent):
+    def __init__(self, width: int, height: int, model: Optional[str] = None) -> None:
+        super().__init__(width, height, model)
+        self.game = GameStateTerm
