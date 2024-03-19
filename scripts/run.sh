@@ -7,16 +7,22 @@ icon_start="\xF0\x9F\x9B\xA0 " # Hammer and Wrench (U+1F6E0)
 display_usage() {
     cat << EOF
 
-Usage: $0 [OPTIONS]
+Usage: $0 [OPTIONS] [ARGS]
 
 Run Project in specified environment
 
     OPTIONS
-     -d     Run in Devcontainer
-     -l     Run in Local env
-     -c     Run in Docker
+     -d [ARGS]      Run in Devcontainer
+     -l [ARGS]      Run in Local env
+     -c             Start the Docker container
+     -e [ARGS]      Execute the program in the container
+     -w [ARGS]      Rerun this script in WSL with provided ARGS
 
-     -h     Display this help
+     -h             Display this help
+
+    ARGS
+     1. Action          human | show | train | ham
+     2. UI              cli | gui | term
 
 Configure $0 defaults using .env file
 
@@ -28,8 +34,16 @@ Configure $0 defaults using .env file
     Keep Docker Logs:
         - KEEP_LOGS=True    ( 1 )
 
+    Default args and their [OPTIONS]:
+        - TRAIN=False       [0 | 1]
+
+        - TERM=False        [0 | 1]
+        - GUI=False         [0 | 1]
+        - CLI=False         [0 | 1]
+
 
 EOF
+    
     exit 1
 }
 

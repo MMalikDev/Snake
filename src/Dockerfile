@@ -25,7 +25,7 @@ RUN adduser \
 # ------------------------------------------------------------ #
 
 FROM builder AS testing
-USER code
+# USER code
 COPY . .
 
 CMD ["python3", "main.py"]

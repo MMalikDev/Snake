@@ -59,6 +59,15 @@ run_docker(){
     follow_logs ${logs[*]}
     exit 0
 }
+docker_exec(){
+    set -f
+    local input=$1
+    local IFS=','
+    local array=($OPTARG)
+    
+    docker exec -it python python3 main.py ${array[*]}
+    exit 0
+}
 
 use_env_file(){
     [[ $(get_bool DEVCONTAINER) == "true" ]] && run_devcontainer $@
@@ -79,12 +88,13 @@ use_wsl(){
 # Main Function
 # ---------------------------------------------------------------------- #
 main(){
-    while getopts "w:dlch" OPTION; do
+    while getopts "w:e:dlch" OPTION; do
         case $OPTION in
-            w) use_wsl $OPTARG      ;;
             d) run_devcontainer $@  ;;
             l) run_locally  $@      ;;
             c) run_docker           ;;
+            e) docker_exec $OPTARG  ;;
+            w) use_wsl $OPTARG      ;;
             h) display_usage        ;;
             ?) display_usage        ;;
         esac

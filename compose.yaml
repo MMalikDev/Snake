@@ -11,6 +11,8 @@ services:
     image: code_py
     container_name: python
 
+    command: sleep infinity
+
     environment:
       THIRD_PARTY_LOGS: $THIRD_PARTY_LOGS
       LOG_LEVEL: $LOG_LEVEL
