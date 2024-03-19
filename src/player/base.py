@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Optional
 
-from lib.game import Direction, SnakeGame
+from game import Direction, SnakeGame
 from lib.utilities import logger
 
 

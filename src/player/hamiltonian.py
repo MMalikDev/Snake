@@ -2,11 +2,11 @@ from collections import defaultdict
 from functools import lru_cache
 from typing import DefaultDict, List, Tuple
 
-from lib.game import Direction, SnakeGame, SnakeGameCLI, SnakeGameGUI, SnakeGameTerm
-from lib.player.base import PlayerBase
+from game import Direction, SnakeGame, SnakeGameCLI, SnakeGameGUI, SnakeGameTerm
+from player.base import PlayerBase
 
 
-class PlayerHam(PlayerBase):
+class PlayerBase(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
         self.cells = width * height
@@ -85,19 +85,19 @@ class PlayerHam(PlayerBase):
         return cycle
 
 
-class PlayerGUI(PlayerHam):
+class PlayerGUI(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
         self.game = SnakeGameGUI
 
 
-class PlayerCLI(PlayerHam):
+class PlayerCLI(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
         self.game = SnakeGameCLI
 
 
-class PlayerTerm(PlayerHam):
+class PlayerTerm(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
         self.game = SnakeGameTerm

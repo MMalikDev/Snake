@@ -3,8 +3,8 @@ from typing import Optional
 
 import pygame
 
-from lib.game import Direction, SnakeGameCLI, SnakeGameGUI, SnakeGameTerm
-from lib.player.base import PlayerBase
+from game import Direction, SnakeGameCLI, SnakeGameGUI, SnakeGameTerm
+from player.base import PlayerBase
 
 
 class PlayerGUI(PlayerBase):

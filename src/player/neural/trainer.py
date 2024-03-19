@@ -3,11 +3,11 @@ from lib import graph
 from lib.utilities import logger
 
 from .agent import Agent
-from .state import StateBase
+from .state import GameStateBase
 
 
 class Trainer:
-    def __init__(self, state: StateBase, agent: Agent, target_score: int) -> None:
+    def __init__(self, state: GameStateBase, agent: Agent, target_score: int) -> None:
         self.state = state
         self.agent = agent
         self.target_score = target_score
@@ -54,14 +54,18 @@ class Trainer:
 
     def train(self) -> None:
         while True:
-            stateOld = self.agent.get_state(self.state)  # Get old state
-            move = self.agent.get_action(stateOld)  # Get move
-            reward, done, self.score = self.state.play_step(move)  # Perform move
-            state_new = self.agent.get_state(self.state)  # Get new state
-            self.agent.remember(stateOld, move, reward, state_new, done)  # Remember
+            # Get old state
+            stateOld = self.agent.get_state(self.state)
+            # Get move
+            move = self.agent.get_action(stateOld)
+            # Perform move
+            reward, done, self.score = self.state.play_step(move)
+            # Get new state
+            state_new = self.agent.get_state(self.state)
+            # Remember
+            self.agent.remember(stateOld, move, reward, state_new, done)
             # Train short memory
             self.agent.train_short_memory(stateOld, move, reward, state_new, done)
-
             if done:
                 self.remember()
                 self.update_stats()

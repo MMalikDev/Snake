@@ -1,10 +1,10 @@
 from typing import Iterable, Optional, Tuple
 
 from config import settings
-from lib.game import Direction, SnakeGame
+from game import Direction, SnakeGame, SnakeGameCLI, SnakeGameGUI, SnakeGameTerm
 
 
-class StateBase(SnakeGame):
+class GameStateBase(SnakeGame):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
         self.max_iteration = settings.States.MAX_ITERATION
@@ -23,12 +23,11 @@ class StateBase(SnakeGame):
 
     def get_direction(self, action: Iterable[int]) -> Optional[Direction]:
         i = self.steps.index(self.direction)
-        next_actions = {
+        return {
             settings.DecisionMatrix.KEEP_STRAIGHT: self.steps[i],
             settings.DecisionMatrix.TURN_RIGHT: self.steps[((i + 1) % 4)],
             settings.DecisionMatrix.TURN_LEFT: self.steps[((i - 1) % 4)],
-        }
-        return next_actions.get(tuple(action))
+        }.get(tuple(action))
 
     def game_over(self) -> bool:
         too_slow = self.frame_iteration > self.max_iteration * len(self.snake)
@@ -49,4 +48,34 @@ class StateBase(SnakeGame):
             self.score += 1
             reward = 10
 
+        return reward, game_over, self.score
+
+
+class GameStateCLI(GameStateBase, SnakeGameCLI):
+    def __init__(self, width: int, height: int) -> None:
+        super().__init__(width, height)
+
+    def play_step(self, action: Iterable[int]) -> Tuple[int, bool, int]:
+        reward, game_over, self.score = super().play_step(action)
+        self.refresh()
+        return reward, game_over, self.score
+
+
+class GameStateGUI(GameStateBase, SnakeGameGUI):
+    def __init__(self, width: int, height: int) -> None:
+        super().__init__(width, height)
+
+    def play_step(self, action: Iterable[int]) -> Tuple[int, bool, int]:
+        reward, game_over, self.score = super().play_step(action)
+        self.refresh()
+        return reward, game_over, self.score
+
+
+class GameStateTerm(GameStateBase, SnakeGameTerm):
+    def __init__(self, width: int, height: int) -> None:
+        super().__init__(width, height)
+
+    def play_step(self, action: Iterable[int]) -> Tuple[int, bool, int]:
+        reward, game_over, self.score = super().play_step(action)
+        self.refresh()
         return reward, game_over, self.score

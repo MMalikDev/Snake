@@ -6,10 +6,10 @@ import numpy as np
 import torch
 
 from config import settings
-from lib.game import Direction, Point
+from game import Direction, Point
 
 from .model import Linear_QNet, QTrainer
-from .state import StateBase
+from .state import GameStateBase
 
 
 class BaseAgent:
@@ -70,7 +70,7 @@ class Agent(BaseAgent):
 
         return final_move
 
-    def get_state(self, game: StateBase):
+    def get_state(self, game: GameStateBase):
         head = game.snake[0]
 
         food_up = game.food.y < game.head.y

@@ -1,7 +1,7 @@
 import sys
 
+import player
 from config import settings
-from lib import player
 from lib.utilities import debug, logger
 
 
@@ -18,56 +18,56 @@ def main() -> None:
     train = settings.TRAINER.TRAIN
 
     if "human" in sys.argv:
-        if "cli" in sys.argv:
-            human = player.human.PlayerCLI(width, height)
-        elif "term" in sys.argv:
-            human = player.human.PlayerTerm(width, height)
-        else:
+        if "gui" in sys.argv:
             human = player.human.PlayerGUI(width, height)
+        elif "cli" in sys.argv:
+            human = player.human.PlayerCLI(width, height)
+        else:
+            human = player.human.PlayerTerm(width, height)
 
         human.play()
-
-    if "show" in sys.argv:
-        agent = player.ai.agent.Agent(model)
-        if "cli" in sys.argv:
-            ai = player.ai.PlayerCLI(width, height, agent)
-        elif "term" in sys.argv:
-            ai = player.ai.PlayerTerm(width, height, agent)
-        else:
-            ai = player.ai.PlayerGUI(width, height, agent)
-
-        if show_graph:
-            agent.model.show_summary()
-        ai.play()
-
-    if "train" in sys.argv or train:
-        if "gui" in sys.argv and display:
-            game = player.ai.state.StateGUI(width, height)
-        elif "cli" in sys.argv:
-            game = player.ai.state.StateCLI(width, height)
-        elif "term" in sys.argv:
-            game = player.ai.state.StateTerm(width, height)
-        else:
-            game = player.ai.state.StateBase(width, height)
-
-        agent = player.ai.agent.Agent(model)
-        if show_graph:
-            agent.model.show_summary()
-
-        trainer = player.ai.Trainer(game, agent, target_score)
-        trainer.train()
 
     if "ham" in sys.argv or train:
         if "gui" in sys.argv and display:
             perfect = player.hamiltonian.PlayerGUI(width, height)
         elif "cli" in sys.argv:
             perfect = player.hamiltonian.PlayerCLI(width, height)
-        elif "term" in sys.argv:
-            perfect = player.hamiltonian.PlayerTerm(width, height)
         else:
-            perfect = player.hamiltonian.PlayerBase(width, height)
+            perfect = player.hamiltonian.PlayerTerm(width, height)
 
         perfect.play()
+
+    if "show" in sys.argv:
+        agent = player.neural.Agent(model)
+        if show_graph:
+            agent.model.show_summary()
+
+        if "gui" in sys.argv:
+            neural_net = player.neural.PlayerGUI(width, height, agent)
+        elif "cli" in sys.argv:
+            neural_net = player.neural.PlayerCLI(width, height, agent)
+        else:
+            neural_net = player.neural.PlayerTerm(width, height, agent)
+
+        neural_net.play()
+
+    if "train" in sys.argv or train:
+        agent = player.neural.Agent(model)
+        if show_graph:
+            agent.model.show_summary()
+
+        if "gui" in sys.argv and display:
+            game = player.neural.GameStateGUI(width, height)
+        elif "cli" in sys.argv:
+            game = player.neural.GameStateCLI(width, height)
+        elif "term" in sys.argv:
+            game = player.neural.GameStateTerm(width, height)
+        else:
+            game = player.neural.GameStateBase(width, height)
+
+        trainer = player.neural.Trainer(game, agent, target_score)
+
+        trainer.train()
 
 
 if __name__ == "__main__":
