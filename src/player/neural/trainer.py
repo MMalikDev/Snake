@@ -3,7 +3,6 @@ from lib import graph
 from lib.utilities import logger
 
 from .agent import Agent
-from .state import GameStateBase
 
 
 class Trainer:
@@ -68,6 +67,7 @@ class Trainer:
             self.agent.remember(stateOld, move, reward, state_new, done)
             # Train short memory
             self.agent.train_short_memory(stateOld, move, reward, state_new, done)
+
             if done:
                 self.remember()
                 self.update_stats()

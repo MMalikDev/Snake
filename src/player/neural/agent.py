@@ -10,7 +10,7 @@ from game import Direction, Point
 from player.base import PlayerBase
 
 from .model import Linear_QNet, QTrainer
-from .state import GameStateBase, GameStateCLI, GameStateGUI, GameStateTerm
+from .state import GameStateBase, GameStateCLI, GameStateCUI, GameStateGUI
 
 
 class _BaseAgent(PlayerBase):
@@ -142,13 +142,13 @@ class AgentGUI(Agent):
         self.game = GameStateGUI
 
 
+class AgentCUI(Agent):
+    def __init__(self, width: int, height: int, model: Optional[str] = None) -> None:
+        super().__init__(width, height, model)
+        self.game = GameStateCUI
+
+
 class AgentCLI(Agent):
     def __init__(self, width: int, height: int, model: Optional[str] = None) -> None:
         super().__init__(width, height, model)
         self.game = GameStateCLI
-
-
-class AgentTerm(Agent):
-    def __init__(self, width: int, height: int, model: Optional[str] = None) -> None:
-        super().__init__(width, height, model)
-        self.game = GameStateTerm

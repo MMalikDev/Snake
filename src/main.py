@@ -20,30 +20,30 @@ def main() -> None:
     if "human" in sys.argv:
         if "gui" in sys.argv:
             human = player.human.PlayerGUI(width, height)
-        elif "cli" in sys.argv:
-            human = player.human.PlayerCLI(width, height)
+        elif "cui" in sys.argv:
+            human = player.human.PlayerCUI(width, height)
         else:
-            human = player.human.PlayerTerm(width, height)
+            human = player.human.PlayerCLI(width, height)
 
         human.play()
 
     if "ham" in sys.argv or train:
         if "gui" in sys.argv and display:
             perfect = player.hamiltonian.PlayerGUI(width, height)
-        elif "cli" in sys.argv:
-            perfect = player.hamiltonian.PlayerCLI(width, height)
+        elif "cui" in sys.argv:
+            perfect = player.hamiltonian.PlayerCUI(width, height)
         else:
-            perfect = player.hamiltonian.PlayerTerm(width, height)
+            perfect = player.hamiltonian.PlayerCLI(width, height)
 
         perfect.play()
 
     if "show" in sys.argv:
         if "gui" in sys.argv:
             agent = player.neural.AgentGUI(width, height, model)
-        elif "cli" in sys.argv:
-            agent = player.neural.AgentCLI(width, height, model)
+        elif "cui" in sys.argv:
+            agent = player.neural.AgentCUI(width, height, model)
         else:
-            agent = player.neural.AgentTerm(width, height, model)
+            agent = player.neural.AgentCLI(width, height, model)
         if show_graph:
             agent.model.show_summary()
 
@@ -52,10 +52,10 @@ def main() -> None:
     if "train" in sys.argv or train:
         if "gui" in sys.argv:
             agent = player.neural.AgentGUI(width, height, model)
+        elif "cui" in sys.argv:
+            agent = player.neural.AgentCUI(width, height, model)
         elif "cli" in sys.argv:
             agent = player.neural.AgentCLI(width, height, model)
-        elif "term" in sys.argv:
-            agent = player.neural.AgentTerm(width, height, model)
         else:
             agent = player.neural.Agent(width, height, model)
         if show_graph:

@@ -2,7 +2,7 @@ from collections import defaultdict
 from functools import lru_cache
 from typing import DefaultDict, List, Tuple
 
-from game import Direction, SnakeGame, SnakeGameCLI, SnakeGameGUI, SnakeGameTerm
+from game import Direction, SnakeGame, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
 from player.base import PlayerBase
 
 
@@ -91,13 +91,13 @@ class PlayerGUI(PlayerBase):
         self.game = SnakeGameGUI
 
 
+class PlayerCUI(PlayerBase):
+    def __init__(self, width: int, height: int) -> None:
+        super().__init__(width, height)
+        self.game = SnakeGameCUI
+
+
 class PlayerCLI(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
         self.game = SnakeGameCLI
-
-
-class PlayerTerm(PlayerBase):
-    def __init__(self, width: int, height: int) -> None:
-        super().__init__(width, height)
-        self.game = SnakeGameTerm

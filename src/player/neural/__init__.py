@@ -1,3 +1,3 @@
-from .agent import Agent, AgentCLI, AgentGUI, AgentTerm
-from .state import GameStateBase, GameStateCLI, GameStateGUI, GameStateTerm
+from .agent import Agent, AgentCLI, AgentCUI, AgentGUI
+from .state import GameStateBase, GameStateCLI, GameStateCUI, GameStateGUI
 from .trainer import Trainer

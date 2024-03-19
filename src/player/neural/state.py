@@ -1,7 +1,7 @@
 from typing import Iterable, Optional, Tuple
 
 from config import settings
-from game import Direction, SnakeGame, SnakeGameCLI, SnakeGameGUI, SnakeGameTerm
+from game import Direction, SnakeGame, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
 
 
 class GameStateBase(SnakeGame):
@@ -51,16 +51,6 @@ class GameStateBase(SnakeGame):
         return reward, game_over, self.score
 
 
-class GameStateCLI(GameStateBase, SnakeGameCLI):
-    def __init__(self, width: int, height: int) -> None:
-        super().__init__(width, height)
-
-    def play_step(self, action: Iterable[int]) -> Tuple[int, bool, int]:
-        reward, game_over, self.score = super().play_step(action)
-        self.refresh()
-        return reward, game_over, self.score
-
-
 class GameStateGUI(GameStateBase, SnakeGameGUI):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
@@ -71,7 +61,17 @@ class GameStateGUI(GameStateBase, SnakeGameGUI):
         return reward, game_over, self.score
 
 
-class GameStateTerm(GameStateBase, SnakeGameTerm):
+class GameStateCUI(GameStateBase, SnakeGameCUI):
+    def __init__(self, width: int, height: int) -> None:
+        super().__init__(width, height)
+
+    def play_step(self, action: Iterable[int]) -> Tuple[int, bool, int]:
+        reward, game_over, self.score = super().play_step(action)
+        self.refresh()
+        return reward, game_over, self.score
+
+
+class GameStateCLI(GameStateBase, SnakeGameCLI):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
 

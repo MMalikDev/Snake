@@ -3,7 +3,7 @@ from typing import Optional
 
 import pygame
 
-from game import Direction, SnakeGameCLI, SnakeGameGUI, SnakeGameTerm
+from game import Direction, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
 from player.base import PlayerBase
 
 
@@ -23,10 +23,10 @@ class PlayerGUI(PlayerBase):
                 }.get(event.key)
 
 
-class PlayerCLI(PlayerBase):
+class PlayerCUI(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
-        self.game = SnakeGameCLI
+        self.game = SnakeGameCUI
 
     def get_input(self, game: SnakeGameGUI) -> Optional[Direction]:
         return {
@@ -37,13 +37,13 @@ class PlayerCLI(PlayerBase):
         }.get(game.get_event())
 
 
-class PlayerTerm(PlayerBase):
+class PlayerCLI(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
         self.height = height
         self.width = width
         self.alive = True
-        self.game = SnakeGameTerm
+        self.game = SnakeGameCLI
 
     def get_input(self, game: SnakeGameGUI) -> Optional[Direction]:
         return {
