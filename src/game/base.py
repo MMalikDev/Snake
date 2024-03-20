@@ -1,6 +1,7 @@
 import random
 import sys
 from abc import abstractmethod
+from collections import deque
 from enum import Enum
 from typing import Optional
 
@@ -29,11 +30,14 @@ class SnakeGame:
         self.food = None
         self.direction = self.direction
         self.head = Point(self.width // 2, self.height // 2)
-        self.snake = [
-            self.head,
-            Point(self.head.x - 1, self.head.y),
-            Point(self.head.x - 2, self.head.y),
-        ]
+        self.snake = deque(
+            [
+                self.head,
+                Point(self.head.x - 1, self.head.y),
+                Point(self.head.x - 2, self.head.y),
+            ]
+        )
+
         self.place_food()
 
     def game_completed(self) -> None:
@@ -53,7 +57,9 @@ class SnakeGame:
     def is_collision(self, pt: Optional[Point] = None) -> bool:
         if not pt:
             pt = self.head
-        if pt in self.snake[1:]:
+        body = self.snake.copy()
+        body.popleft()
+        if pt in body:
             logger.debug("Snake ate itself...")
             return True
         if not 0 <= pt.x < self.width or not 0 <= pt.y < self.height:
@@ -85,7 +91,7 @@ class SnakeGame:
                 self.head = Point(x - 1, y)
 
         if self.head != self.snake[1]:
-            self.snake.insert(0, self.head)
+            self.snake.appendleft(self.head)
             return
 
         # Keep going straight if head is eating neck
@@ -99,7 +105,7 @@ class SnakeGame:
             case Direction.LEFT:
                 self.head = Point(x + 1, y)
 
-        self.snake.insert(0, self.head)
+        self.snake.appendleft(self.head)
 
     def update_tail(self) -> bool:
         if self.head == self.food:
