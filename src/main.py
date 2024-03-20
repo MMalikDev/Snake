@@ -29,11 +29,11 @@ def main() -> None:
 
     if "ham" in sys.argv or train:
         if "gui" in sys.argv and display:
-            perfect = player.hamiltonian.complete.PlayerGUI(width, height)
+            perfect = player.hamiltonian.smart.PlayerGUI(width, height)
         elif "cui" in sys.argv:
-            perfect = player.hamiltonian.complete.PlayerCUI(width, height)
+            perfect = player.hamiltonian.smart.PlayerCUI(width, height)
         else:
-            perfect = player.hamiltonian.complete.PlayerCLI(width, height)
+            perfect = player.hamiltonian.smart.PlayerCLI(width, height)
 
         perfect.play()
 

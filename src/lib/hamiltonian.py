@@ -28,7 +28,7 @@ Idea: For any array of size (M by N) where either or both of M and N must be eve
 import collections
 import functools
 import random
-from typing import DefaultDict, Dict, List, Set, Tuple, Union
+from typing import DefaultDict, Dict, List, Optional, Set, Tuple
 
 import matplotlib.pyplot as plt
 
@@ -65,7 +65,7 @@ class HamCycle:
 
         logger.debug("Finding Subarray Hamiltonian Cycles")
         self.count = 1
-        self.subcycles = [self.ham_cycle(*subarr) for subarr in self.subarrays]
+        self.subcycles = [self.ham_cycle(*subarray) for subarray in self.subarrays]
         if display:
             self.show_subcycles()
 
@@ -79,23 +79,128 @@ class HamCycle:
 
         logger.debug("Hamiltonian Cycle Complete!")
 
-    def get_graph(self) -> Dict[Point, Point]:
-        g = collections.defaultdict(list)
-        for a, b in self.full_cycle:
-            g[a].append(b)
-            g[b].append(a)
+    def show_full_cycle(self) -> None:
+        plt.figure("Full Cycle")
+        for edge in self.full_cycle:
+            a, b = edge
+            plt.plot([a[1], b[1]], [a[0], b[0]], "r-")
+        plt.title("Full Hamiltonian Cycle")
+        plt.show()
 
+    def show_subcycles(self) -> None:
+        plt.figure("Subcycles")
+        for subcycle in self.subcycles:
+            x = [p[1] for p in subcycle]
+            y = [p[0] for p in subcycle]
+            plt.plot(x, y, "r-")
+        plt.title("Subregion Hamiltonian Cycles")
+        plt.show()
+
+    def show_subcycle_regions(self) -> None:
+        arr = [[0] * self.C for _ in range(self.R)]
+        subs = self.subarrays[:]
+        random.shuffle(subs)
+        for k, (y1, x1, y2, x2) in enumerate(subs):
+            for i in range(y1, y2 + 1):
+                for j in range(x1, x2 + 1):
+                    arr[i][j] = k
+        plt.figure("subarray regions")
+        plt.title("Subdivisions of Array")
+        plt.imshow(arr)
+
+    @functools.lru_cache(None)
+    def get_edges(self, rows: int, cols: int) -> DefaultDict[Point, List[Point]]:
+        """Returns an edge-list for 4-directionally connected nodes in an array of dimensions (R, C)"""
+        edges = collections.defaultdict(list)
+        for r in range(rows):
+            for c in range(cols):
+                node = Point(r, c)
+                if r:
+                    edges[node].append(Point(r - 1, c))
+                    edges[Point(r - 1, c)].append(node)
+                if c:
+                    edges[node].append(Point(r, c - 1))
+                    edges[Point(r, c - 1)].append(node)
+        return edges
+
+    def subdivide(
+        self, R: int, C: int, max_size: int
+    ) -> List[Tuple[int, int, int, int]]:
+        """
+        splits array into subarrays that:
+            1. have an even number of nodes
+            2. have less than max_size nodes
+
+        returns a list of [(y1, x1, y2, x2), ...] representing the bounds of the subarrays
+        """
+
+        def size(y1: int, x1: int, y2: int, x2: int) -> int:
+            return (y2 - y1 + 1) * (x2 - x1 + 1)
+
+        def dfs(y1: int, x1: int, y2: int, x2: int) -> List[Tuple[int, int, int, int]]:
+            nonlocal max_size
+
+            if size(y1, x1, y2, x2) <= max_size:
+                return [(y1, x1, y2, x2)]
+
+            # divide along horizontal
+            if y2 - y1 > x2 - x1:
+                y = (y1 + y2) // 2
+                if (y - y1) & 1:
+                    return dfs(y1, x1, y, x2) + dfs(min(y + 1, y2), x1, y2, x2)
+                return dfs(y1, x1, max(y - 1, y1), x2) + dfs(y, x1, y2, x2)
+
+            # divide along vertical
+            x = (x1 + x2) // 2
+            return dfs(y1, x1, y2, x) + dfs(y1, min(x + 1, x2), y2, x2)
+
+        return dfs(0, 0, R, C)
+
+    def ham_cycle(self, x1: int, y1: int, x2: int, y2: int) -> List[Point]:
+        """
+        Finds the hamiltonian cycle for a rectangle of (height, width)
+        Returns the edge-list offset by (offset_y, offset_x)
+        """
+
+        # Get the offset to translate coordinates back to original values
+        x_off, y_off = x1, y1
+
+        # Normalize points to start at (0, 0) instead of (x1, y1)
+        R = x2 - x1 + 1
+        C = y2 - y1 + 1
+        N = R * C
+
+        # Find cycle from (0, 0) through all nodes and back to (0, 0)
         start = Point(0, 0)
-        finish = Point(*g[start][0])
-        dag = {finish: start}
-        while start != finish:
-            a, b = g[start]
 
-            node = Point(*b) if dag.get(a, (-1, -1)) == start else Point(*a)
+        def dfs(
+            node: Point, visited: Set[Point], edges: DefaultDict[Point, List[Point]]
+        ) -> List[Optional[Point]]:
+            nonlocal N, start
+            if len(visited) == N and start in edges[node]:
+                return [start]
+            for neighbor in edges[node]:
+                if neighbor not in visited:
+                    v = visited.copy() | {neighbor}
+                    p = dfs(neighbor, v, edges)
+                    if p[-1]:
+                        return [neighbor] + p
+            return [None]
 
-            dag[start] = node
-            start = node
-        return dag
+        @functools.lru_cache(None)
+        def find_cycle(R: int, C: int) -> List[Point]:
+            # Build edge list
+            start = Point(0, 0)
+            edges = self.get_edges(R, C)
+            return [start] + dfs(start, {start}, edges)
+
+        self.count += 1
+        logger.debug("%i/%i", self.count, len(self.subarrays))
+
+        result = find_cycle(R, C)
+
+        # Shift the path by X_offset and Y_offset
+        return [Point(x + x_off, y + y_off) for x, y in result]
 
     def kernel_connect(
         self, shuffle: bool = True
@@ -126,7 +231,7 @@ class HamCycle:
                 a, b = tuple(sorted(a)), tuple(sorted(b))
                 uf.union(a, b)
 
-        logger.debug(uf.group)
+        # logger.debug(uf.group)
 
         # 2-4. Create parallel and vertical kernels and shuffle
         kernels = []
@@ -165,121 +270,20 @@ class HamCycle:
                     removed |= set([h1, h2])
         return [edge for edge in list(uf.id) if edge not in removed]
 
-    def show_full_cycle(self) -> None:
-        plt.figure("Full Cycle")
-        for edge in self.full_cycle:
-            a, b = edge
-            plt.plot([a[1], b[1]], [a[0], b[0]], "r-")
-        plt.title("Full Hamiltonian Cycle")
-        plt.show()
+    def get_graph(self) -> Dict[Point, Point]:
+        g = collections.defaultdict(list)
+        for a, b in self.full_cycle:
+            g[a].append(b)
+            g[b].append(a)
 
-    def show_subcycles(self) -> None:
-        plt.figure("Subcycles")
-        for subcycle in self.subcycles:
-            x = [p[1] for p in subcycle]
-            y = [p[0] for p in subcycle]
-            plt.plot(x, y, "r-")
-        plt.title("Subregion Hamiltonian Cycles")
-        plt.show()
-
-    def show_subcycle_regions(self) -> None:
-        arr = [[0] * self.C for _ in range(self.R)]
-        subs = self.subarrays[:]
-        random.shuffle(subs)
-        for k, (y1, x1, y2, x2) in enumerate(subs):
-            for i in range(y1, y2 + 1):
-                for j in range(x1, x2 + 1):
-                    arr[i][j] = k
-        plt.figure("subarray regions")
-        plt.title("Subdivisions of Array")
-        plt.imshow(arr)
-
-    def subdivide(
-        self, R: int, C: int, max_size: int
-    ) -> List[Tuple[int, int, int, int]]:
-        """
-        splits array into subarrays that:
-            1. have an even number of nodes
-            2. have less than max_size nodes
-
-        returns a list of [(y1, x1, y2, x2), ...] representing the bounds of the subarrays
-        """
-
-        def size(y1: int, x1: int, y2: int, x2: int) -> int:
-            return (y2 - y1 + 1) * (x2 - x1 + 1)
-
-        def dfs(y1: int, x1: int, y2: int, x2: int) -> List[Tuple[int, int, int, int]]:
-            nonlocal max_size
-
-            if size(y1, x1, y2, x2) <= max_size:
-                return [(y1, x1, y2, x2)]
-
-            # divide along horizontal
-            if y2 - y1 > x2 - x1:
-                y = (y1 + y2) // 2
-                if (y - y1) & 1:
-                    return dfs(y1, x1, y, x2) + dfs(min(y + 1, y2), x1, y2, x2)
-                return dfs(y1, x1, max(y - 1, y1), x2) + dfs(y, x1, y2, x2)
-
-            # divide along vertical
-            x = (x1 + x2) // 2
-            return dfs(y1, x1, y2, x) + dfs(y1, min(x + 1, x2), y2, x2)
-
-        return dfs(0, 0, R, C)
-
-    @functools.lru_cache(None)
-    def get_edges(self, rows: int, cols: int) -> DefaultDict[Point, List[Point]]:
-        """Returns an edge-list for 4-directionally connected nodes in an array of dimensions (R, C)"""
-        edges = collections.defaultdict(list)
-        for r in range(rows):
-            for c in range(cols):
-                node = Point(r, c)
-                if r:
-                    edges[node].append(Point(r - 1, c))
-                    edges[Point(r - 1, c)].append(node)
-                if c:
-                    edges[node].append(Point(r, c - 1))
-                    edges[Point(r, c - 1)].append(node)
-        return edges
-
-    def ham_cycle(self, y1: int, x1: int, y2: int, x2: int) -> List[Point]:
-        """
-        Finds the hamiltonian cycle for a rectangle of (height, width)
-        Returns the edge-list offset by (offset_y, offset_x)
-        """
-
-        def dfs(
-            node: Point, visited: Set[Point], edges: DefaultDict[Point, List[Point]]
-        ) -> List[Union[Point, int]]:
-            nonlocal N, start
-            if len(visited) == N and start in edges[node]:
-                return [start]
-            for neighbor in edges[node]:
-                if neighbor not in visited:
-                    v = visited.copy() | {neighbor}
-                    p = dfs(neighbor, v, edges)
-                    if p[-1] != -1:
-                        return [neighbor] + p
-            return [-1]
-
-        @functools.lru_cache(None)
-        def find_cycle(R: int, C: int) -> List[Point]:
-            # Build edge list
-            start = Point(0, 0)
-            edges = self.get_edges(R, C)
-            return [start] + dfs(start, {start}, edges)
-
-        offset_x, offset_y = y1, x1
-        R = y2 - y1 + 1
-        C = x2 - x1 + 1
-        N = R * C
-
-        # Find cycle from (0, 0) through all nodes and back to (0, 0)
         start = Point(0, 0)
-        result = find_cycle(R, C)
+        finish = Point(*g[start][0])
+        dag = {finish: start}
+        while start != finish:
+            a, b = g[start]
 
-        self.count += 1
-        logger.debug("%i/%i", self.count, len(self.subarrays))
+            node = Point(*b) if dag.get(a, (-1, -1)) == start else Point(*a)
 
-        # Shift the path by offset_x and offset_y
-        return [Point(x + offset_x, y + offset_y) for x, y in result]
+            dag[start] = node
+            start = node
+        return dag

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from functools import lru_cache
-from typing import DefaultDict, List, Set
+from typing import DefaultDict, List, Optional, Set
 
 from game import Direction, Point, SnakeGame, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
 from player.base import PlayerBase
@@ -49,7 +49,7 @@ class PlayerHam(PlayerBase):
 
         def dfs(
             node: Point, visited: Set[Point], edges: DefaultDict[Point, List[Point]]
-        ) -> List[Point]:
+        ) -> List[Optional[Point]]:
             nonlocal start
             if len(visited) == self.cells and start in edges[node]:
                 return [start]
@@ -57,9 +57,9 @@ class PlayerHam(PlayerBase):
                 if neighbor not in visited:
                     v = visited.copy() | {neighbor}
                     p = dfs(neighbor, v, edges)
-                    if p[-1] != -1:
+                    if p[-1]:
                         return [neighbor] + p
-            return [-1]
+            return [None]
 
         nodes = [start] + dfs(start, {start}, self.edges)
         cycle, n = [], len(nodes)
