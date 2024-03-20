@@ -1,15 +1,13 @@
 import random
 import sys
 from abc import abstractmethod
-from collections import namedtuple
 from enum import Enum
 from typing import Optional
 
 import keyboard
 
+from lib.dsa import Point
 from lib.utilities import logger
-
-Point = namedtuple("Point", "x, y")
 
 
 class Direction(Enum):
@@ -23,7 +21,7 @@ class SnakeGame:
     def __init__(self, width: int, height: int) -> None:
         self.width = width
         self.height = height
-
+        self.max_score = (width * height) - 3
         self.direction = Direction.RIGHT
 
     def new_game(self) -> None:
@@ -38,7 +36,15 @@ class SnakeGame:
         ]
         self.place_food()
 
+    def game_completed(self) -> None:
+        input("Press the <ENTER> key to continue...")
+
+        self.exit()
+
     def place_food(self) -> None:
+        if self.score == self.max_score:
+            self.game_completed()
+
         while not self.food or self.food in self.snake:
             x = random.randint(0, self.width - 1)
             y = random.randint(0, self.height - 1)

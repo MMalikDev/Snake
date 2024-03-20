@@ -8,7 +8,7 @@ from lib.utilities import debug, logger
 # ---------------------------------------------------------------------- #
 # Main Functions                                                         #
 # ---------------------------------------------------------------------- #
-# @debug
+@debug
 def main() -> None:
     width, height = settings.Dimension.WIDTH, settings.Dimension.HEIGHT
     target_score = settings.TRAINER.TARGET_SCORE
@@ -29,11 +29,11 @@ def main() -> None:
 
     if "ham" in sys.argv or train:
         if "gui" in sys.argv and display:
-            perfect = player.hamiltonian.PlayerGUI(width, height)
+            perfect = player.hamiltonian.complete.PlayerGUI(width, height)
         elif "cui" in sys.argv:
-            perfect = player.hamiltonian.PlayerCUI(width, height)
+            perfect = player.hamiltonian.complete.PlayerCUI(width, height)
         else:
-            perfect = player.hamiltonian.PlayerCLI(width, height)
+            perfect = player.hamiltonian.complete.PlayerCLI(width, height)
 
         perfect.play()
 

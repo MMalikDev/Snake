@@ -19,3 +19,14 @@ class TerminalTooSmall(Exception):
             self.current_width,
             self.current_height,
         )
+
+
+class NoCyclePossible(Exception):
+    def __init__(self, width: int, height: int):
+        self.width = width
+        self.height = height
+        self.message = "Hamiltonian Cycles not possible if both sides are of odd sizes."
+        self.message += " Change one of the following values: %iw %ih"
+
+    def __str__(self):
+        return self.message % (self.width, self.height)
