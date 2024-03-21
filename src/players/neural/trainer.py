@@ -73,5 +73,5 @@ class Trainer:
                 self.update_stats()
                 self.save_best()
                 self.save_steadfast()
-                if settings.TRAINER.SHOW_GRAPH:
+                if settings.TRAINER.SHOW_GRAPHS:
                     self.show_progress()

@@ -2,18 +2,30 @@ import collections
 import functools
 from typing import DefaultDict
 
+from config import settings
 from game import Direction, Point, SnakeGame, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
 from lib.hamiltonian import HamCycle
-from player.base import PlayerBase
+from players.base import PlayerBase
 
 
 class PlayerHam(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
-        self.graph = HamCycle(self.width, self.height).graph
-        self.food = collections.defaultdict(int)
+        self.max_size = settings.HamCycle.SUBSECTION_SIZE
+        self.shuffle = settings.HamCycle.SHUFFLE
+        self.risk = settings.HamCycle.RISK
+
+        self.cycle = HamCycle(
+            self.width,
+            self.height,
+            max_size=self.max_size,
+            shuffle=self.shuffle,
+        )
+        self.graph = self.cycle.graph
+
+        self.food = None
         self.cells = width * height
-        self.cost = None
+        self.cost = collections.defaultdict(lambda: self.cells)
 
         self.directions = {
             (0, -1): Direction.UP,
@@ -26,6 +38,7 @@ class PlayerHam(PlayerBase):
         if not self.food:
             self.food = game.food
             self.cost = self.calc_cost(game.food)
+
         if self.food == game.head:
             self.food = game.food
             self.cost = self.calc_cost(game.food)
@@ -50,12 +63,13 @@ class PlayerHam(PlayerBase):
         pt = self.graph[game.head]
         return self.directions[pt.x - x, pt.y - y]
 
-    def is_safe(self, game: SnakeGame, new_head: Point, food_found: int = 5) -> bool:
+    def is_safe(self, game: SnakeGame, new_head: Point) -> bool:
         """
         Looks ahead snake.length + food_found steps:
             if snake never bites it's tail when following the ham path returns True
             if snake bites its tail then the path is not safe returns False
         """
+        food_found = self.risk
 
         body = game.snake.copy()
         body.appendleft(new_head)

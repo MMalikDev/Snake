@@ -1,3 +1,4 @@
+import sys
 from logging import config, getLogger
 from os import getenv
 from time import perf_counter
@@ -7,6 +8,13 @@ from typing import Any, Callable
 # ENV variables
 # ---------------------------------------------------------------------- #
 load_variable = getenv
+
+
+def load_bool(key: str, default: bool = False) -> bool:
+    env = load_variable(key, f"{default}").upper() in ["1", "TRUE"]
+    args = key in sys.argv
+    return env or args
+
 
 LOG_LEVEL = load_variable("LOG_LEVEL", "INFO")
 DISABLE_EXTRA_LOGS = load_variable("THIRD_PARTY_LOGS", "True").title() == "False"

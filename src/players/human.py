@@ -4,7 +4,7 @@ from typing import Optional
 import pygame
 
 from game import Direction, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
-from player.base import PlayerBase
+from players.base import PlayerBase
 
 
 class PlayerGUI(PlayerBase):

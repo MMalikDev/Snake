@@ -60,10 +60,10 @@ To quickly get started playing the snake game, follow these steps:
 - Run the game using the appropriate command depending on your desired UI:
 
 ```bash
-bash run.sh gui human   # Play in the GUI as a human
-bash run.sh cui show    # Watch your models perform in the CUI
-bash run.sh cli ham     # Watch the game complete itself in the CLI
-bash run.sh train       # Train your model in headless mode
+bash run.sh gui human     # Play in the GUI as a human
+bash run.sh cui demo      # Watch your models perform in the CUI
+bash run.sh cli ham       # Watch the game complete itself in the CLI
+bash run.sh neural train  # Train your model in headless mode
 ```
 
 - Alteratively, use docker-compose to easily build and run the containerized versions

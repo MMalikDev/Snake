@@ -8,6 +8,6 @@ class Color:
 
 
 class Display:
-    BLOCK = int(load_variable("BLOCK_SIZE", 20))
-    FRAMERATE = int(load_variable("FRAMERATE", 30))
-    SHOW = load_variable("SHOW", "True").upper() in ["1", "TRUE"]
+    FRAMERATE = int(load_variable("FRAMERATE_GUI", 30))
+    BLOCK = int(load_variable("BLOCK_SIZE_GUI", 20))
+    DELAY = float(load_variable("DELAY_CLI", 0.1))

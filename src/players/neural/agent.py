@@ -7,7 +7,7 @@ import torch
 
 from config import settings
 from game import Direction, Point
-from player.base import PlayerBase
+from players.base import PlayerBase
 
 from .model import Linear_QNet, QTrainer
 from .state import GameStateBase, GameStateCLI, GameStateCUI, GameStateGUI

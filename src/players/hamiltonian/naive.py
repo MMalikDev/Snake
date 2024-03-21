@@ -3,7 +3,7 @@ from functools import lru_cache
 from typing import DefaultDict, List, Optional, Set
 
 from game import Direction, Point, SnakeGame, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
-from player.base import PlayerBase
+from players.base import PlayerBase
 
 
 class PlayerHam(PlayerBase):

@@ -10,7 +10,7 @@ from .base import Point, SnakeGame
 class SnakeGameCUI(SnakeGame):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
-        self.framerate = settings.Display.FRAMERATE
+        self.speed = int(settings.Display.DELAY * 1000)
         self.tail = None
 
         self.initialize_display()
@@ -44,7 +44,7 @@ class SnakeGameCUI(SnakeGame):
         self.init_colors()
         self.display.keypad(True)
         self.display.nodelay(True)
-        self.display.timeout(self.framerate)
+        self.display.timeout(self.speed)
 
     def color_cell(self, pt: Point, icon) -> None:
         self.display.addch(pt.y + self.h_offset, pt.x + self.w_offset, " ", icon)

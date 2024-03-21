@@ -9,7 +9,7 @@ from .base import Point, SnakeGame
 class SnakeGameCLI(SnakeGame):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
-        self.speed = settings.Display.FRAMERATE // 100
+        self.speed = settings.Display.DELAY
         self.display = Terminal()
         self.tail = None
 

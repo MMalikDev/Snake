@@ -1,12 +1,22 @@
+from config import settings
 from game import Direction, SnakeGame, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
 from lib.hamiltonian import HamCycle
-from player.base import PlayerBase
+from players.base import PlayerBase
 
 
 class PlayerHam(PlayerBase):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
-        self.graph = HamCycle(self.width, self.height).graph
+        self.max_size = settings.HamCycle.SUBSECTION_SIZE
+        self.shuffle = settings.HamCycle.SHUFFLE
+
+        self.cycle = HamCycle(
+            self.width,
+            self.height,
+            max_size=self.max_size,
+            shuffle=self.shuffle,
+        )
+        self.graph = self.cycle.graph
 
         self.directions = {
             (0, -1): Direction.UP,

@@ -1,6 +1,4 @@
-import sys
-
-import player
+import players
 from config import settings
 from lib.utilities import debug, logger
 
@@ -12,58 +10,44 @@ from lib.utilities import debug, logger
 def main() -> None:
     width, height = settings.Dimension.WIDTH, settings.Dimension.HEIGHT
     target_score = settings.TRAINER.TARGET_SCORE
-    show_graph = settings.TRAINER.SHOW_GRAPH
     model = settings.Models.FILEPATH
-    display = settings.Display.SHOW
-    train = settings.TRAINER.TRAIN
 
-    if "human" in sys.argv:
-        if "gui" in sys.argv:
-            human = player.human.PlayerGUI(width, height)
-        elif "cui" in sys.argv:
-            human = player.human.PlayerCUI(width, height)
+    if settings.Player.HAM:
+        player = players.hamiltonian.smart
+    elif settings.Player.HUMAN:
+        player = players.human
+    elif settings.Player.NEURAL:
+        player = players.neural
+
+    if settings.Player.HAM or settings.Player.HUMAN:
+        if settings.UI.GUI:
+            game = player.PlayerGUI(width, height)
+        elif settings.UI.CUI:
+            game = player.PlayerCUI(width, height)
         else:
-            human = player.human.PlayerCLI(width, height)
+            game = player.PlayerCLI(width, height)
 
-        human.play()
+        game.play()
 
-    if "ham" in sys.argv or train:
-        if "gui" in sys.argv and display:
-            perfect = player.hamiltonian.smart.PlayerGUI(width, height)
-        elif "cui" in sys.argv:
-            perfect = player.hamiltonian.smart.PlayerCUI(width, height)
+    if settings.Player.NEURAL:
+        if settings.UI.GUI:
+            agent = player.AgentGUI(width, height, model)
+        elif settings.UI.CUI:
+            agent = player.AgentCUI(width, height, model)
+        elif settings.UI.CLI:
+            agent = player.AgentCLI(width, height, model)
         else:
-            perfect = player.hamiltonian.smart.PlayerCLI(width, height)
+            agent = player.Agent(width, height, model)
 
-        perfect.play()
-
-    if "show" in sys.argv:
-        if "gui" in sys.argv:
-            agent = player.neural.AgentGUI(width, height, model)
-        elif "cui" in sys.argv:
-            agent = player.neural.AgentCUI(width, height, model)
-        else:
-            agent = player.neural.AgentCLI(width, height, model)
-        if show_graph:
+        if settings.TRAINER.SHOW_GRAPHS:
             agent.model.show_summary()
 
-        agent.play()
+        if settings.TRAINER.TRAIN_AGENT:
+            trainer = players.neural.Trainer(agent, target_score)
+            trainer.train()
 
-    if "train" in sys.argv or train:
-        if "gui" in sys.argv:
-            agent = player.neural.AgentGUI(width, height, model)
-        elif "cui" in sys.argv:
-            agent = player.neural.AgentCUI(width, height, model)
-        elif "cli" in sys.argv:
-            agent = player.neural.AgentCLI(width, height, model)
-        else:
-            agent = player.neural.Agent(width, height, model)
-        if show_graph:
-            agent.model.show_summary()
-
-        trainer = player.neural.Trainer(agent, target_score)
-
-        trainer.train()
+        if settings.Agent.DEMO:
+            agent.play()
 
 
 if __name__ == "__main__":

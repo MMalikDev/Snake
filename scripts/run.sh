@@ -35,12 +35,20 @@ Configure $0 defaults using .env file
         - KEEP_LOGS=True    ( 1 )
 
     Default args and their [OPTIONS]:
-        - TRAIN=False       [0 | 1]
+        Default UI
+            - CUI=False                     [0 | 1]
+            - GUI=False                     [0 | 1]
+            - CLI=False                     [0 | 1]
 
-        - TERM=False        [0 | 1]
-        - GUI=False         [0 | 1]
-        - CLI=False         [0 | 1]
+        Default Player
+            - HAM=False                     [0 | 1]
+            - HUMAN=False                   [0 | 1]
+            - NEURAL=False                  [0 | 1]
 
+        Default Reinforcement  Learning
+            - SHOW_TRAINING_GRAPHS=True     [0 | 1]
+            - TRAIN_AGENT=False             [0 | 1]
+            - AGENT_DEMO=False              [0 | 1]
 
 EOF
     
