@@ -1,6 +1,6 @@
 import collections
 import functools
-from typing import DefaultDict
+from typing import DefaultDict, Optional
 
 from config import settings
 from game import Direction, Point, SnakeGame, SnakeGameCLI, SnakeGameCUI, SnakeGameGUI
@@ -43,6 +43,13 @@ class PlayerHam(PlayerBase):
             self.food = game.food
             self.cost = self.calc_cost(game.food)
 
+        if shortcut := self.shortcut_available(game):
+            return shortcut
+
+        pt = self.graph[game.head]
+        return self.directions[pt.x - game.head.x, pt.y - game.head.y]
+
+    def shortcut_available(self, game: SnakeGame) -> Optional[Direction]:
         x, y = game.head
 
         moves = (
@@ -59,9 +66,6 @@ class PlayerHam(PlayerBase):
         pt = min(moves, key=lambda i: self.cost[i])
         if pt == self.graph[game.head] or self.is_safe(game, pt):
             return self.directions[pt.x - x, pt.y - y]
-
-        pt = self.graph[game.head]
-        return self.directions[pt.x - x, pt.y - y]
 
     def is_safe(self, game: SnakeGame, new_head: Point) -> bool:
         """
