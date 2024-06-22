@@ -21,8 +21,8 @@ Run Project in specified environment
      -h             Display this help
 
     ARGS
-     1. Action          human | show | train | ham
-     2. UI              cli | gui | term
+     1. Action          human | neural show | neural train | ham
+     2. UI              cli | gui | cui
 
 Configure $0 defaults using .env file
 
@@ -144,7 +144,7 @@ run_python(){
     cd ..
 }
 run_python_dev(){
-    printf "\n$icon_start Running Python in devcontainber\n\n"
+    printf "\n$icon_start Running Python in devcontainer\n\n"
     cd $(get_env PYTHON_IMAGE)
     python3 main.py $@
     cd ..
